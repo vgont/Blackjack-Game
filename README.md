@@ -30,7 +30,7 @@ $ python3 .\server.py
 - Typescript
 - TailwindCSS
 - Oracle Database
-- Python
+- Python 3
 
 
 
