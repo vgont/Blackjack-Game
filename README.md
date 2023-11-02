@@ -14,7 +14,7 @@ $ npm install
 #running the development server
 $npm run dev
 ```
-Second, install requirements and run the python file:
+Second, in an another terminal, install requirements and run the python file:
 ```bash
 #going to the server directory
 $ cd .\client\
