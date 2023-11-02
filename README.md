@@ -6,7 +6,7 @@ Fullstack project created for university test
 First, install dependencies and run the development server in the client directory:
 ```bash
 #going to the client directory
-$ cd client/
+$ cd .\client\
 
 #installing dependencies
 $ npm install
@@ -17,7 +17,7 @@ $npm run dev
 Second, install requirements and run the python file:
 ```bash
 #going to the server directory
-$ cd server/
+$ cd .\client\
 
 #installing requirements
 $ pip install -r requirements.txt
