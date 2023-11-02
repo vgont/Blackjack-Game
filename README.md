@@ -23,7 +23,7 @@ $ cd .\client\
 $ pip install -r requirements.txt
 
 #running the python file
-$ python3 server.py
+$ python3 .\server.py
 ```
 ### Tecnologies
 - Next.js
