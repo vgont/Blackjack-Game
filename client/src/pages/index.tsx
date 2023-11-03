@@ -4,25 +4,36 @@ import DeckImage from "@/components/DeckImage";
 import PlayerHUD from "@/components/PlayerHUD";
 import Score from "@/components/Score";
 import Title from "@/components/Title";
+import WinModal from "@/components/WinModal";
 import { Card, Deck } from "@/types/types";
 import React, { useEffect, useState } from "react";
 
 function index() {
   const [deck, setDeck] = useState<Deck>();
   const [card, setCard] = useState<Card | null>(null);
+  const [loadingNewCard, setLoadingNewCard] = useState(true);
+
+  const [player_1] = useState("Player 1");
+  const [player_2] = useState("Player 2");
+
   const [totalCardsDrawedPlayerOne, setTotalCardsDrawedPlayerOne] = useState(0);
   const [totalCardsDrawedPlayerTwo, setTotalCardsDrawedPlayerTwo] = useState(0);
-  const [loadingNewCard, setLoadingNewCard] = useState(true);
+
   const [cardPlayerOne, setCardPlayerOne] = useState<Card | null>(null);
   const [cardPlayerTwo, setCardPlayerTwo] = useState<Card | null>(null);
+
   const [cardsSumPlayerOne, setCardsSumPlayerOne] = useState(0);
   const [cardsSumPlayerTwo, setCardsSumPlayerTwo] = useState(0);
+
   const [scorePlayerOne, setScorePlayerOne] = useState(0);
   const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
+
   const [playerOneTurn, setPlayerOneTurn] = useState(true);
 
-  const handleNewDeck = async () => {
-    await FetchNewDeck(setDeck);
+  const [winner, setWinner] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleResetMatch = () => {
     setCardPlayerOne(null);
     setCardPlayerTwo(null);
     setPlayerOneTurn(true);
@@ -32,24 +43,37 @@ function index() {
     setTotalCardsDrawedPlayerTwo(0);
   };
 
+  const handleNewDeck = async () => {
+    await FetchNewDeck(setDeck);
+    handleResetMatch();
+  };
+
   useEffect(() => {
     changeCard();
   }, [deck, playerOneTurn]);
 
-  const handleWinner = (
-    playerSum: number,
-    playerScore: number,
-    setPlayerScore: (score: number) => void
-  ) => {
+  const handleWinner = (player: string, playerSum: number) => {
     if (playerSum == 21) {
-      setPlayerScore(playerScore + 1);
+      setWinner(player);
+      handleResetMatch();
       return;
+    }
+    if (playerSum > 21) {
+      if (player === player_1) {
+        setWinner(player_2);
+        setScorePlayerTwo((score) => score + 1);
+      } else {
+        setWinner(player_1);
+        setScorePlayerOne((score) => score + 1);
+      }
+      handleResetMatch();
+      return setIsModalOpen(true);
     }
   };
 
   useEffect(() => {
-    handleWinner(cardsSumPlayerOne, scorePlayerOne, setScorePlayerOne);
-    handleWinner(cardsSumPlayerTwo, scorePlayerTwo, setScorePlayerTwo);
+    handleWinner(player_1, cardsSumPlayerOne);
+    handleWinner(player_2, cardsSumPlayerTwo);
   }, [cardsSumPlayerOne, cardsSumPlayerTwo]);
 
   const changeCard = async () => {
@@ -93,7 +117,7 @@ function index() {
           card={cardPlayerOne}
           hasDeck={deck ? true : false}
           secondPlayer={false}
-          playerName="player 1"
+          playerName={player_1}
           cardsSum={cardsSumPlayerOne}
           drawNewCard={() =>
             handleNewCard(
@@ -118,7 +142,7 @@ function index() {
           card={cardPlayerTwo}
           hasDeck={deck ? true : false}
           secondPlayer
-          playerName="player 2"
+          playerName={player_2}
           cardsSum={cardsSumPlayerTwo}
           drawNewCard={() =>
             handleNewCard(
@@ -134,6 +158,11 @@ function index() {
           totalCardsDrawed={totalCardsDrawedPlayerTwo}
         />
       </div>
+      <WinModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        winner={winner}
+      />
     </div>
   );
 }
