@@ -1,8 +1,6 @@
 import Image from "next/image";
 import DrawCard from "./DrawCard";
-import { FetchNewCard } from "@/Utils/cardUtils";
-import { Card, Deck } from "@/types/types";
-
+import { Card } from "@/types/types";
 interface IPlayerHUD {
   card: Card | null;
   hasDeck: boolean;
@@ -62,7 +60,7 @@ const PlayerHUD: React.FC<IPlayerHUD> = ({
           className="mx-auto"
         />
       ) : (
-        <div className="flex flex-col w-[226px] justify-center items-center bg-black bg-opacity-30 rounded-lg shadow-2xl border-2 border-green-950"></div>
+        <div className="flex flex-col w-[226px] justify-center items-center bg-black bg-opacity-30 rounded-lg shadow-2xl border-2 border-green-950" />
       )}
     </div>
   );
