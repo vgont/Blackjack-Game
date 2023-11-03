@@ -6,7 +6,7 @@ Fullstack project created for university test
 First, install dependencies and run the development server in the client directory:
 ```bash
 #going to the client directory
-$ cd client/
+$ cd .\client\
 
 #installing dependencies
 $ npm install
@@ -14,23 +14,23 @@ $ npm install
 #running the development server
 $npm run dev
 ```
-Second, install requirements and run the python file:
+Second, in an another terminal, install requirements and run the python file:
 ```bash
 #going to the server directory
-$ cd server/
+$ cd .\client\
 
 #installing requirements
 $ pip install -r requirements.txt
 
 #running the python file
-$ python3 server.py
+$ python .\server.py
 ```
 ### Tecnologies
 - Next.js
 - Typescript
 - TailwindCSS
 - Oracle Database
-- Python
+- Python 3
 
 
 
