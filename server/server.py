@@ -9,7 +9,7 @@ import oracledb as odb
 
 def getConnection():
     try:
-        con = odb.connect(user="rm99069", password="171103",
+        con = odb.connect(user="user", password="pass",
                           host="oracle.fiap.com.br", service_name="orcl")
     except Exception as e:
         print(e)
