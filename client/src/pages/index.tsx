@@ -29,14 +29,23 @@ function index() {
   const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
 
   const [playerOneTurn, setPlayerOneTurn] = useState(true);
+  const [playerTwoTurn, setPlayerTwoTurn] = useState(false);
 
-  const [winner, setWinner] = useState("");
+  const [stopDrawDisabledPlayerOne, setStopDrawDisabledPlayerOne] =
+    useState(true);
+  const [stopDrawDisabledPlayerTwo, setStopDrawDisabledPlayerTwo] =
+    useState(true);
+
+  const [winner, setWinner] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleResetMatch = () => {
     setCardPlayerOne(null);
     setCardPlayerTwo(null);
     setPlayerOneTurn(true);
+    setPlayerTwoTurn(false);
+    setStopDrawDisabledPlayerOne(true);
+    setStopDrawDisabledPlayerTwo(true);
     setCardsSumPlayerOne(0);
     setCardsSumPlayerTwo(0);
     setTotalCardsDrawedPlayerOne(0);
@@ -53,9 +62,31 @@ function index() {
   }, [deck, playerOneTurn]);
 
   const handleWinner = (player: string, playerSum: number) => {
+    if (
+      totalCardsDrawedPlayerOne >= 2 &&
+      totalCardsDrawedPlayerTwo >= 2 &&
+      stopDrawDisabledPlayerOne &&
+      stopDrawDisabledPlayerTwo
+    ) {
+      if (cardsSumPlayerOne === cardsSumPlayerTwo) {
+        setWinner("nobody");
+        setIsModalOpen(true);
+        return;
+      }
+      if (cardsSumPlayerOne < (21 && cardsSumPlayerTwo)) {
+        setWinner(player_2);
+        setIsModalOpen(true);
+        return;
+      }
+      if (cardsSumPlayerTwo < (21 && cardsSumPlayerOne)) {
+        setWinner(player_1);
+        setIsModalOpen(true);
+        return;
+      }
+    }
     if (playerSum == 21) {
       setWinner(player);
-      handleResetMatch();
+      setIsModalOpen(true);
       return;
     }
     if (playerSum > 21) {
@@ -66,7 +97,6 @@ function index() {
         setWinner(player_1);
         setScorePlayerOne((score) => score + 1);
       }
-      handleResetMatch();
       return setIsModalOpen(true);
     }
   };
@@ -74,7 +104,23 @@ function index() {
   useEffect(() => {
     handleWinner(player_1, cardsSumPlayerOne);
     handleWinner(player_2, cardsSumPlayerTwo);
-  }, [cardsSumPlayerOne, cardsSumPlayerTwo]);
+  }, [
+    cardsSumPlayerOne,
+    cardsSumPlayerTwo,
+    stopDrawDisabledPlayerOne,
+    stopDrawDisabledPlayerTwo,
+  ]);
+
+  useEffect(() => {
+    if (totalCardsDrawedPlayerOne == 2 && totalCardsDrawedPlayerTwo <= 2)
+      setStopDrawDisabledPlayerOne(false);
+    if (totalCardsDrawedPlayerTwo == 2 && totalCardsDrawedPlayerOne <= 2)
+      setStopDrawDisabledPlayerTwo(false);
+  }, [totalCardsDrawedPlayerOne, totalCardsDrawedPlayerTwo]);
+
+  useEffect(() => {
+    if (!isModalOpen) handleResetMatch();
+  }, [isModalOpen]);
 
   const changeCard = async () => {
     if (deck) {
@@ -101,8 +147,47 @@ function index() {
       setCardsSum(currentSum + card.value);
       setTotalCardsDrawed(totalCardsDrawed + 1);
     }
+
+    if (totalCardsDrawedPlayerOne >= 2 && stopDrawDisabledPlayerTwo) {
+      setPlayerOneTurn(true);
+      setStopDrawDisabledPlayerTwo(true);
+      setPlayerTwoTurn(false);
+      return;
+    }
+    if (totalCardsDrawedPlayerTwo >= 2 && stopDrawDisabledPlayerOne) {
+      setPlayerTwoTurn(true);
+      setStopDrawDisabledPlayerOne(true);
+      setPlayerOneTurn(false);
+      return;
+    }
+
     setPlayerOneTurn(!playerOneTurn);
+    setPlayerTwoTurn(playerOneTurn);
   };
+
+  const handleStopDraw = (
+    setStopDrawPlayer: (stopDraw: boolean) => void,
+    setPlayerTurn: (isPlayerTurn: boolean) => void,
+    setOpponentPlayerTurn: (isOpponentPlayerTurn: boolean) => void
+  ) => {
+    setStopDrawPlayer(true);
+    setPlayerTurn(false);
+    setOpponentPlayerTurn(true);
+  };
+
+  const handlePlayersCardsSum = () => {
+    if (winner === player_1)
+      return { winner: cardsSumPlayerOne, loser: cardsSumPlayerTwo };
+    return { winner: cardsSumPlayerTwo, loser: cardsSumPlayerOne };
+  };
+
+  const handleWinnerCardsDrawed = () => {
+    if (winner == player_1) return totalCardsDrawedPlayerOne;
+    return totalCardsDrawedPlayerTwo;
+  };
+
+  const handleTotalCardsDrawed = () =>
+    totalCardsDrawedPlayerOne + totalCardsDrawedPlayerTwo;
 
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen p-10">
@@ -131,6 +216,14 @@ function index() {
           playerTurn={playerOneTurn}
           loadingCard={loadingNewCard}
           totalCardsDrawed={totalCardsDrawedPlayerOne}
+          handleStopDraw={() =>
+            handleStopDraw(
+              setStopDrawDisabledPlayerOne,
+              setPlayerOneTurn,
+              setPlayerTwoTurn
+            )
+          }
+          isStopDrawDisabled={stopDrawDisabledPlayerOne}
         />
         <Score
           scorePlayerOne={scorePlayerOne}
@@ -153,15 +246,26 @@ function index() {
               setTotalCardsDrawedPlayerTwo
             )
           }
-          playerTurn={!playerOneTurn}
+          playerTurn={playerTwoTurn}
           loadingCard={loadingNewCard}
           totalCardsDrawed={totalCardsDrawedPlayerTwo}
+          handleStopDraw={() =>
+            handleStopDraw(
+              setStopDrawDisabledPlayerTwo,
+              setPlayerTwoTurn,
+              setPlayerOneTurn
+            )
+          }
+          isStopDrawDisabled={stopDrawDisabledPlayerTwo}
         />
       </div>
       <WinModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         winner={winner}
+        winnerCardsDrawed={handleWinnerCardsDrawed}
+        playersCardsSum={handlePlayersCardsSum}
+        totalCardsDrawed={handleTotalCardsDrawed}
       />
     </div>
   );

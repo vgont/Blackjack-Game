@@ -1,6 +1,7 @@
 import Image from "next/image";
 import DrawCard from "./DrawCard";
 import { Card } from "@/types/types";
+import StopDraw from "./StopDraw";
 interface IPlayerHUD {
   card: Card | null;
   hasDeck: boolean;
@@ -11,6 +12,8 @@ interface IPlayerHUD {
   playerTurn: boolean;
   loadingCard: boolean;
   totalCardsDrawed: number;
+  handleStopDraw: () => void;
+  isStopDrawDisabled: boolean;
 }
 
 const PlayerHUD: React.FC<IPlayerHUD> = ({
@@ -23,6 +26,8 @@ const PlayerHUD: React.FC<IPlayerHUD> = ({
   loadingCard,
   drawNewCard,
   totalCardsDrawed,
+  handleStopDraw,
+  isStopDrawDisabled,
 }) => {
   return (
     <div
@@ -48,6 +53,10 @@ const PlayerHUD: React.FC<IPlayerHUD> = ({
             onclick={drawNewCard}
             playerTurn={playerTurn}
             hasDeck={hasDeck}
+          />
+          <StopDraw
+            onclick={handleStopDraw}
+            isStopDrawDisabled={isStopDrawDisabled}
           />
         </div>
       </div>

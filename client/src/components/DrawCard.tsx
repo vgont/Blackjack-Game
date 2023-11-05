@@ -12,10 +12,7 @@ const DrawCard: React.FC<IDrawCard> = ({
   loadingCard,
 }) => {
   const handleBgColor = () => {
-    if (!hasDeck || !playerTurn || loadingCard) {
-      return "bg-gray-400 text-gray-300";
-    }
-    if ((!hasDeck && playerTurn) || loadingCard) {
+    if ((!hasDeck && playerTurn) || !hasDeck || !playerTurn || loadingCard) {
       return "bg-gray-400 text-gray-300";
     }
     return "bg-green-600 text-white hover:bg-green-700";
