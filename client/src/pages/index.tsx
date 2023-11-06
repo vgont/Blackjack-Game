@@ -46,6 +46,7 @@ function index() {
     setPlayerTwoTurn(false);
     setStopDrawDisabledPlayerOne(true);
     setStopDrawDisabledPlayerTwo(true);
+    setWinner(null);
     setCardsSumPlayerOne(0);
     setCardsSumPlayerTwo(0);
     setTotalCardsDrawedPlayerOne(0);
@@ -67,14 +68,12 @@ function index() {
     if (cardsSumPlayerOne === 21 || cardsSumPlayerTwo > 21) {
       setWinner(player_1);
       setScorePlayerOne((score) => score + 1);
-      setIsModalOpen(true);
-      return;
+      return true;
     }
     if (cardsSumPlayerTwo === 21 || cardsSumPlayerOne > 21) {
       setWinner(player_2);
       setScorePlayerTwo((score) => score + 1);
-      setIsModalOpen(true);
-      return;
+      return true;
     }
     if (
       (totalCardsDrawedPlayerOne && totalCardsDrawedPlayerTwo) >= 2 &&
@@ -84,20 +83,25 @@ function index() {
       if (cardsSumPlayerOne < (21 && cardsSumPlayerTwo)) {
         setWinner(player_2);
         setScorePlayerTwo((score) => score + 1);
-        setIsModalOpen(true);
-        return;
+        return true;
       }
       if (cardsSumPlayerTwo < (21 && cardsSumPlayerOne)) {
         setWinner(player_1);
         setScorePlayerOne((score) => score + 1);
-        setIsModalOpen(true);
-        return;
+        return true;
+      }
+      if (cardsSumPlayerOne === cardsSumPlayerTwo) {
+        setWinner("");
+        return true;
       }
     }
+    return false;
   };
 
   useEffect(() => {
-    handleWinner();
+    if (winner === null) {
+      setIsModalOpen(handleWinner());
+    }
   }, [
     cardsSumPlayerOne,
     cardsSumPlayerTwo,
@@ -113,7 +117,14 @@ function index() {
   }, [totalCardsDrawedPlayerOne, totalCardsDrawedPlayerTwo]);
 
   useEffect(() => {
-    if (!isModalOpen) handleResetMatch();
+    if (isModalOpen) {
+      setStopDrawDisabledPlayerOne(true);
+      setStopDrawDisabledPlayerTwo(true);
+      setPlayerOneTurn(false);
+      setPlayerTwoTurn(false);
+      return;
+    }
+    handleResetMatch();
   }, [isModalOpen]);
 
   const changeCard = async () => {
@@ -142,19 +153,26 @@ function index() {
       setTotalCardsDrawed(totalCardsDrawed + 1);
     }
 
-    if (totalCardsDrawedPlayerOne >= 2 && stopDrawDisabledPlayerTwo) {
+    if (
+      totalCardsDrawedPlayerOne >= 1 &&
+      totalCardsDrawedPlayerTwo >= 2 &&
+      stopDrawDisabledPlayerTwo
+    ) {
       setPlayerOneTurn(true);
       setStopDrawDisabledPlayerTwo(true);
       setPlayerTwoTurn(false);
       return;
     }
-    if (totalCardsDrawedPlayerTwo >= 2 && stopDrawDisabledPlayerOne) {
+    if (
+      totalCardsDrawedPlayerTwo >= 1 &&
+      totalCardsDrawedPlayerOne >= 2 &&
+      stopDrawDisabledPlayerOne
+    ) {
       setPlayerTwoTurn(true);
       setStopDrawDisabledPlayerOne(true);
       setPlayerOneTurn(false);
       return;
     }
-
     setPlayerOneTurn(!playerOneTurn);
     setPlayerTwoTurn(playerOneTurn);
   };

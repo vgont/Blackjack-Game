@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import PlayerInfos from "./PlayerInfos";
 import Title from "./Title";
 
@@ -48,10 +49,20 @@ const WinModal: React.FC<IWinModal> = ({
     return response.json();
   }
 
+  const [isRegistered, setIsRegistered] = useState(false);
+
   const handleRegister = async () => {
-    registerMatch();
-    setIsModalOpen(false);
+    try {
+      registerMatch();
+      setIsRegistered(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    if (!isModalOpen) setIsRegistered(false);
+  }, [isModalOpen]);
 
   if (isModalOpen)
     return (
@@ -60,7 +71,9 @@ const WinModal: React.FC<IWinModal> = ({
         onClick={() => setIsModalOpen(false)}
       >
         <div
-          className="fixed inset-0 flex flex-col w-1/3 h-fit p-8 m-auto bg-green-800 rounded text-white border-solid border-2 border-green-950 bg-opacity-80 backdrop-blur items-center"
+          className={`fixed inset-0 flex ${
+            isRegistered ? "flex-row" : "flex-col"
+          } w-1/3 h-fit p-2 m-auto bg-green-800 rounded text-white border-solid border-2 border-green-950 bg-opacity-80 backdrop-blur items-center`}
           onClick={stopPropagation}
         >
           <button
@@ -69,36 +82,44 @@ const WinModal: React.FC<IWinModal> = ({
           >
             X
           </button>
-          <Title>{winner ? `${winner} Win!` : "Draw"}</Title>
-          <div
-            id="winner_infos"
-            className="flex flex-col items-center justify-center"
-          >
-            {winner && (
-              <div className="flex flex-col items-center justify-center">
-                <PlayerInfos
-                  cardsDrawed={playersCardsDrawed().winner}
-                  cardsSum={playersCardsSum().winner}
-                />
-                <h2 className="text-3xl font-extrabold text-white font-inter mt-10 mb-5">
-                  {loser()}
-                </h2>
-                <PlayerInfos
-                  cardsDrawed={playersCardsDrawed().loser}
-                  cardsSum={playersCardsSum().loser}
-                />
+          {isRegistered ? (
+            <h2 className="text-3xl font-extrabold text-white font-inter mx-auto">
+              {"Successful registered"}
+            </h2>
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <Title>{winner ? `${winner} Win!` : "Draw"}</Title>
+              <div
+                id="winner_infos"
+                className="flex flex-col items-center justify-center"
+              >
+                {winner && (
+                  <div className="flex flex-col items-center justify-center">
+                    <PlayerInfos
+                      cardsDrawed={playersCardsDrawed().winner}
+                      cardsSum={playersCardsSum().winner}
+                    />
+                    <h2 className="text-3xl font-extrabold text-white font-inter mt-10 mb-5">
+                      {loser()}
+                    </h2>
+                    <PlayerInfos
+                      cardsDrawed={playersCardsDrawed().loser}
+                      cardsSum={playersCardsSum().loser}
+                    />
+                  </div>
+                )}
+                <p className="font-semibold mt-16 text-2xl uppercase">
+                  {`Total cards drawed: ${totalCardsDrawed()}`}{" "}
+                </p>
               </div>
-            )}
-            <p className="font-semibold mt-16 text-2xl uppercase">
-              {`Total cards drawed: ${totalCardsDrawed()}`}{" "}
-            </p>
-          </div>
-          <button
-            className="bg-green-600 px-5 py-2 rounded font-semibold mt-10 hover:bg-green-700"
-            onClick={handleRegister}
-          >
-            {"Register Match"}
-          </button>
+              <button
+                className="bg-green-600 px-5 py-2 rounded font-semibold mt-10 hover:bg-green-700"
+                onClick={handleRegister}
+              >
+                {"Register Match"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
