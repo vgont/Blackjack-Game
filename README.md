@@ -17,7 +17,7 @@ $npm run dev
 Second, in an another terminal, install requirements and run the python file:
 ```bash
 #going to the server directory
-$ cd .\client\
+$ cd .\server\
 
 #installing requirements
 $ pip install -r requirements.txt
