@@ -59,6 +59,8 @@ function index() {
     await FetchNewDeck(setDeck);
     setScorePlayerOne(0);
     setScorePlayerTwo(0);
+    setTotalDraws(0);
+    setTotalMatchs(0);
     handleResetMatch();
   };
 

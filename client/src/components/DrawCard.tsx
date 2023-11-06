@@ -34,7 +34,7 @@ const DrawCard: React.FC<IDrawCard> = ({
 
   return (
     <button
-      className={`self-center mt-10 px-5 py-2 rounded font-semibold ${handleBgColor()}`}
+      className={`self-center mt-10 px-5 py-2 rounded font-semibold transition ${handleBgColor()}`}
       onClick={onclick}
       disabled={handleDisabledButton(playerTurn, hasDeck, loadingCard)}
     >
