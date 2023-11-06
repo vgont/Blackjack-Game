@@ -27,6 +27,8 @@ function index() {
 
   const [scorePlayerOne, setScorePlayerOne] = useState(0);
   const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
+  const [totalMatchs, setTotalMatchs] = useState(0);
+  const [totalDraws, setTotalDraws] = useState(0);
 
   const [playerOneTurn, setPlayerOneTurn] = useState(true);
   const [playerTwoTurn, setPlayerTwoTurn] = useState(false);
@@ -68,11 +70,13 @@ function index() {
     if (cardsSumPlayerOne === 21 || cardsSumPlayerTwo > 21) {
       setWinner(player_1);
       setScorePlayerOne((score) => score + 1);
+      setTotalMatchs((matchs) => matchs + 1);
       return true;
     }
     if (cardsSumPlayerTwo === 21 || cardsSumPlayerOne > 21) {
       setWinner(player_2);
       setScorePlayerTwo((score) => score + 1);
+      setTotalMatchs((matchs) => matchs + 1);
       return true;
     }
     if (
@@ -83,15 +87,19 @@ function index() {
       if (cardsSumPlayerOne < (21 && cardsSumPlayerTwo)) {
         setWinner(player_2);
         setScorePlayerTwo((score) => score + 1);
+        setTotalMatchs((matchs) => matchs + 1);
         return true;
       }
       if (cardsSumPlayerTwo < (21 && cardsSumPlayerOne)) {
         setWinner(player_1);
         setScorePlayerOne((score) => score + 1);
+        setTotalMatchs((matchs) => matchs + 1);
         return true;
       }
       if (cardsSumPlayerOne === cardsSumPlayerTwo) {
         setWinner("");
+        setTotalDraws((draw) => draw + 1);
+        setTotalMatchs((matchs) => matchs + 1);
         return true;
       }
     }
@@ -247,6 +255,8 @@ function index() {
         <Score
           scorePlayerOne={scorePlayerOne}
           scorePlayerTwo={scorePlayerTwo}
+          totalDraws={totalDraws}
+          totalMatchs={totalMatchs}
           handleDeck={handleNewDeck}
         />
         <PlayerHUD
