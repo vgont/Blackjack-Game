@@ -1,5 +1,5 @@
 # Blackjack Game 
-Fullstack project created for university test
+Fullstack project created for university test.
 
 ## Getting Started
 
