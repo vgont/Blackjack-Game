@@ -1,8 +1,9 @@
+import PlayerInfos from "./PlayerInfos";
 import Title from "./Title";
 
 interface IWinModal {
   winner: string | null;
-  winnerCardsDrawed: () => number;
+  playersCardsDrawed: () => { winner: number; loser: number };
   playersCardsSum: () => { winner: number; loser: number };
   totalCardsDrawed: () => number;
   isModalOpen: boolean;
@@ -13,7 +14,7 @@ const WinModal: React.FC<IWinModal> = ({
   isModalOpen,
   setIsModalOpen,
   winner,
-  winnerCardsDrawed,
+  playersCardsDrawed,
   totalCardsDrawed,
   playersCardsSum,
 }) => {
@@ -23,15 +24,20 @@ const WinModal: React.FC<IWinModal> = ({
 
   const matchData = {
     winner: winner,
-    winnerCardsDrawed: winnerCardsDrawed(),
-    totalCardsDrawed: totalCardsDrawed(),
+    winnerCardsDrawed: playersCardsDrawed().winner,
+    loserCardsDrawed: playersCardsDrawed().loser,
     winnerCardsSum: playersCardsSum().winner,
     loserCardsSum: playersCardsSum().loser,
   };
 
+  const loser = () => {
+    if (winner === "Player 1") return "Player 2";
+    if (winner === "Player 2") return "Player 1";
+  };
+
   console.log(matchData);
 
-  const handleRegister = async () => {
+  async function registerMatch() {
     const response = await fetch("http://localhost:8080/registerMatch", {
       method: "POST",
       headers: {
@@ -40,6 +46,11 @@ const WinModal: React.FC<IWinModal> = ({
       body: JSON.stringify(matchData),
     });
     return response.json();
+  }
+
+  const handleRegister = async () => {
+    registerMatch();
+    setIsModalOpen(false);
   };
 
   if (isModalOpen)
@@ -59,24 +70,31 @@ const WinModal: React.FC<IWinModal> = ({
             X
           </button>
           <Title>{winner ? `${winner} Win!` : "Draw"}</Title>
-          <div id="winner_infos" className="flex flex-col">
+          <div
+            id="winner_infos"
+            className="flex flex-col items-center justify-center"
+          >
             {winner && (
-              <div>
-                {" "}
-                <p className="font-semibold text-xl uppercase">
-                  {`Cards drawed: ${winnerCardsDrawed()}`}{" "}
-                </p>
-                <p className="font-semibold text-xl uppercase">
-                  {`Total cards sum: ${playersCardsSum().winner}`}{" "}
-                </p>
+              <div className="flex flex-col items-center justify-center">
+                <PlayerInfos
+                  cardsDrawed={playersCardsDrawed().winner}
+                  cardsSum={playersCardsSum().winner}
+                />
+                <h2 className="text-3xl font-extrabold text-white font-inter mt-10 mb-5">
+                  {loser()}
+                </h2>
+                <PlayerInfos
+                  cardsDrawed={playersCardsDrawed().loser}
+                  cardsSum={playersCardsSum().loser}
+                />
               </div>
             )}
-            <p className="font-semibold mt-5 text-xl uppercase">
+            <p className="font-semibold mt-16 text-2xl uppercase">
               {`Total cards drawed: ${totalCardsDrawed()}`}{" "}
             </p>
           </div>
           <button
-            className="bg-green-600 px-5 py-2 rounded font-semibold mt-10"
+            className="bg-green-600 px-5 py-2 rounded font-semibold mt-10 hover:bg-green-700"
             onClick={handleRegister}
           >
             {"Register Match"}
