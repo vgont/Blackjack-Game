@@ -36,7 +36,7 @@ const Score: React.FC<IScore> = ({
       {showWarning && (
         <div
           className={`absolute bg-white w-1/6 h-16 mt-48 text-black rounded opacity-0 transition-opacity ${
-            showWarning ? "opacity-70" : ""
+            showWarning ? "opacity-100" : ""
           }`}
         >
           <p className="text-center">
