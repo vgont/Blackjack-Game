@@ -263,7 +263,7 @@ function index() {
       <WinModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        winner={player_1}
+        winner={winner}
         playersCardsDrawed={handlePlayersCardsDrawed}
         playersCardsSum={handlePlayersCardsSum}
         totalCardsDrawed={handleTotalCardsDrawed}
