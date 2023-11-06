@@ -54,6 +54,8 @@ function index() {
 
   const handleNewDeck = async () => {
     await FetchNewDeck(setDeck);
+    setScorePlayerOne(0);
+    setScorePlayerTwo(0);
     handleResetMatch();
   };
 
@@ -61,49 +63,41 @@ function index() {
     changeCard();
   }, [deck, playerOneTurn]);
 
-  const handleWinner = (player: string, playerSum: number) => {
+  const handleWinner = () => {
+    if (cardsSumPlayerOne === 21 || cardsSumPlayerTwo > 21) {
+      setWinner(player_1);
+      setScorePlayerOne((score) => score + 1);
+      setIsModalOpen(true);
+      return;
+    }
+    if (cardsSumPlayerTwo === 21 || cardsSumPlayerOne > 21) {
+      setWinner(player_2);
+      setScorePlayerTwo((score) => score + 1);
+      setIsModalOpen(true);
+      return;
+    }
     if (
-      totalCardsDrawedPlayerOne >= 2 &&
-      totalCardsDrawedPlayerTwo >= 2 &&
+      (totalCardsDrawedPlayerOne && totalCardsDrawedPlayerTwo) >= 2 &&
       stopDrawDisabledPlayerOne &&
       stopDrawDisabledPlayerTwo
     ) {
-      if (cardsSumPlayerOne === cardsSumPlayerTwo) {
-        setWinner("nobody");
-        setIsModalOpen(true);
-        return;
-      }
       if (cardsSumPlayerOne < (21 && cardsSumPlayerTwo)) {
         setWinner(player_2);
+        setScorePlayerTwo((score) => score + 1);
         setIsModalOpen(true);
         return;
       }
       if (cardsSumPlayerTwo < (21 && cardsSumPlayerOne)) {
         setWinner(player_1);
+        setScorePlayerOne((score) => score + 1);
         setIsModalOpen(true);
         return;
       }
     }
-    if (playerSum == 21) {
-      setWinner(player);
-      setIsModalOpen(true);
-      return;
-    }
-    if (playerSum > 21) {
-      if (player === player_1) {
-        setWinner(player_2);
-        setScorePlayerTwo((score) => score + 1);
-      } else {
-        setWinner(player_1);
-        setScorePlayerOne((score) => score + 1);
-      }
-      return setIsModalOpen(true);
-    }
   };
 
   useEffect(() => {
-    handleWinner(player_1, cardsSumPlayerOne);
-    handleWinner(player_2, cardsSumPlayerTwo);
+    handleWinner();
   }, [
     cardsSumPlayerOne,
     cardsSumPlayerTwo,
@@ -181,9 +175,16 @@ function index() {
     return { winner: cardsSumPlayerTwo, loser: cardsSumPlayerOne };
   };
 
-  const handleWinnerCardsDrawed = () => {
-    if (winner == player_1) return totalCardsDrawedPlayerOne;
-    return totalCardsDrawedPlayerTwo;
+  const handlePlayersCardsDrawed = () => {
+    if (winner == player_1)
+      return {
+        winner: totalCardsDrawedPlayerOne,
+        loser: totalCardsDrawedPlayerTwo,
+      };
+    return {
+      winner: totalCardsDrawedPlayerTwo,
+      loser: totalCardsDrawedPlayerOne,
+    };
   };
 
   const handleTotalCardsDrawed = () =>
@@ -262,8 +263,8 @@ function index() {
       <WinModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        winner={winner}
-        winnerCardsDrawed={handleWinnerCardsDrawed}
+        winner={player_1}
+        playersCardsDrawed={handlePlayersCardsDrawed}
         playersCardsSum={handlePlayersCardsSum}
         totalCardsDrawed={handleTotalCardsDrawed}
       />
