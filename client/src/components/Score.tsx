@@ -6,12 +6,16 @@ interface IScore {
   handleDeck: () => void;
   scorePlayerOne: number;
   scorePlayerTwo: number;
+  totalMatchs: number;
+  totalDraws: number;
 }
 
 const Score: React.FC<IScore> = ({
   handleDeck,
   scorePlayerOne,
   scorePlayerTwo,
+  totalMatchs,
+  totalDraws,
 }) => {
   return (
     <div className="w-1/5 flex flex-col items-center bg-green-700 border-2 border-green-900 rounded-lg mx-2 p-3">
@@ -19,9 +23,8 @@ const Score: React.FC<IScore> = ({
       <div className="flex flex-col self-start ml-12 gap-4">
         <PlayerScore playerName="Player 1" score={scorePlayerOne} />
         <PlayerScore playerName="Player 2" score={scorePlayerTwo} />
-        <p className="text-white font-semibold text-2xl font-mono">{`Matchs: ${
-          scorePlayerOne + scorePlayerTwo
-        }`}</p>
+        <p className="text-white font-semibold text-2xl font-mono">{`Draws: ${totalDraws}`}</p>
+        <p className="text-white font-semibold text-2xl font-mono">{`Matchs: ${totalMatchs}`}</p>
       </div>
       <NewDeck onclick={handleDeck} />
     </div>
